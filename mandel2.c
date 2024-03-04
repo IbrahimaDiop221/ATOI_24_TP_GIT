@@ -30,32 +30,12 @@ struct col getcol(int val, int max)
 {
     double q = (double)val / (double)max; // Normalizes the value
 
-    struct col c = {0, 0, 0};
+    struct col c;
 
-    // Maps the normalized value to a color range
-    if (q < 0.25)
-    {
-        c.r = (q * 4.0) * 255.0;
-        c.b = 255;
-    }
-    else if (q < 0.5)
-    {
-        c.b = 255;
-        c.g = 255;
-        c.r = (q - 0.25) * 4.0 * 255.0;
-    }
-    else if (q < 0.75)
-    {
-        c.b = 255;
-        c.r = 255;
-        c.g = 255.0 - (q - 0.5) * 4.0 * 255.0;
-    }
-    else
-    {
-        c.b = 255 - (q - 0.75) * 4.0 * 255.0;
-        c.g = 0;
-        c.r = 255;
-    }
+    // Use trigonometric functions for a vivid color palette
+    c.r = (sin(q * M_PI * 2) + 1) / 2 * 255;
+    c.g = (sin(q * M_PI * 2 + 2.0 / 3.0 * M_PI) + 1) / 2 * 255;
+    c.b = (sin(q * M_PI * 2 + 4.0 / 3.0 * M_PI) + 1) / 2 * 255;
 
     return c;
 }
@@ -84,16 +64,6 @@ double cy(int y)
 
 int main(int argc, char *argv[])
 {
-    double trsh = TRSH;
-    if (argc != 2)
-    {
-        printf("Using default threshold: %f\n", trsh);
-    }else{
-        trsh = atof(argv[1]); // Convergence threshold for the Mandelbrot set.
-        printf("Using threshold: %f\n", trsh);
-    }
-
-
     struct ppm_image im;
     ppm_image_init(&im, SIZEX, SIZEY);
 
@@ -114,7 +84,7 @@ int main(int argc, char *argv[])
             {
                 double mod = cabs(z);
 
-                if (trsh < mod)
+                if (TRSH < mod)
                 {
                     break;
                 }
@@ -124,7 +94,7 @@ int main(int argc, char *argv[])
                 iter++;
             }
 
-            struct col cc = getcol(log(iter), colref);
+            struct col cc = getcol(iter, colref);
             ppm_image_setpixel(&im, i, j, cc.r, cc.g, cc.b);
         }
     }

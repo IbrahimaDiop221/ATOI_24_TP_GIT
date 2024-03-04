@@ -1,36 +1,19 @@
 CC=gcc
 CFLAGS=-O3 -g
-<<<<<<< HEAD
-LDFLAGS=-lm
-
-TARGETS=test mandel
-
-all: $(TARGETS)
-
-libppm.so: ppm.c
-	$(CC) $(CFLAGS) -fpic -shared $^ -o $@
-
-test: main.c libppm.so
-	$(CC) $(CFLAGS) $(LDFLAGS) $^ -lppm -L. -o $@
-
-mandel: mandel.c libppm.so
-	$(CC) $(CFLAGS) $(LDFLAGS) $^ -lm -L. -o $@
-
-clean:
-	rm -fr $(TARGETS) *.so
-
-=======
  
-TARGET=test
+TARGET=test mandel
  
 all: $(TARGET)
  
 libppm.so : ppm.c
-    $(CC) $(CFLAGS)  -fpic -shared $^ -o $@
+	$(CC) $(CFLAGS)  -fpic -shared $^ -o $@
  
 test: main.c libppm.so
-    $(CC) $(CFLAGS) $(LDFLAGS) -lppm -L. main.c -o $@
+	$(CC) $(CFLAGS) $(LDFLAGS) main.c  -lppm -L. -o $@
+
+mandel: mandel.c libppm.so
+	$(CC) $(CFLAGS) $(LDFLAGS) $< -lppm -L. -lm -Wl,-rpath=$(PWD) -o $@
  
+
 clean:
-    rm -fr $(TARGET) *.so
->>>>>>> origin/color_support
+	rm -fr $(TARGET) *.so
